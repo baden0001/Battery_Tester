@@ -11,20 +11,36 @@ Battery_Tester
  Votlage Sensor        Analog input 1
  
  Outputs controlled:
+ 
+ 
  Power Bank 1          Pin 2
    Two 1 ohm resistors
+   
+   
  Power Bank 2          Pin 3
    One 1 ohm resistor
+   
+   
  Power Bank 3          Pin 4
    One 2 ohm resistor
+   
+   
  Power Bank 4          Pin 5
    One 3 Ohm resistor
+   
+   
  Power Bank 5          Pin 6
    One 10 Ohm resistor
+   
+   
  Power Bank 6          Pin 7
    One 10 Ohm resistor
+   
+   
  Power Bank 7          Pin 8
    One 10 Ohm resistor
+   
+   
  
  Power Calculations (these are not current vales used):
  12.5V:
