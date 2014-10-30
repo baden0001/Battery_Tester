@@ -1,0 +1,11 @@
+Battery Tester Parts List:
+
+Arduino UNO
+
+8 count 5V relay board with NO, NC, and COM accessible outputs
+
+50A hall effect current sensor
+
+Voltage divider circuit (to be designed)
+
+High current relays (3 count fo rthe 1 ohm loads due to the 8 coutn 5V relay board only capable of 30VDC 10A)
