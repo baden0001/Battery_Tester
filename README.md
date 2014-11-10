@@ -69,3 +69,9 @@ Current_Tester folder contains programs for the Arduino
  Revisions:
  
  V0.01      Initial release.
+ 
+  V0.02      Fixed SamplePeriod bug.  Switched to variable instead of a define.
+  
+            Added Over Current Shut down.  This will shut the test down,
+             turn off all Resistor outputs and send "Battery Current High"
+             to computer
