@@ -47,58 +47,9 @@ Battery_Tester
    
    
  
- Power Calculations (these are not current vales used):
- 
- 12.5V:
- 
-  12.5Amp x 3 = 37.5 Amps = 1 ohm
-  
-  1.25 x 2 = 2.5 = 10ohm
-  
-  40 Amps
-  
- 
- 12V:
- 
-  12Amp x 3 = 36 Amps = 1 ohm
-  
-  4  = 3ohm
-  
-  40 Amps
-  
-  
- 11.5V:
- 
-  11.5Amp x 3 = 34.5 Amps = 1 ohm
-  
-  3.83  = 3ohm
-  
-  1.15  = 10 ohm
-  
-  39.48 Amps
-  
-  
- 11V:
- 
-  11Amp x 3 = 33 Amps = 1 ohm
-  
-  5.5 = 2 ohm
-  
-  1.1 = 10 ohm
-  
-  39.6 Amps
-  
-  
- 10.5V:
- 
-  10.5Amp x 3 = 31.5 Amps= 1 ohm
-  
-  5.25 = 2 ohm
-  
-  1.05Amp x 3 = 3.15 = 10 ohm
-  
-  39.9 Amps
-  
+Battery_Tester folder contains program for the computer
+
+Current_Tester folder contains programs for the Arduino
  
  The voltage will be monitored to every tenth of a volt at an interval
  of one second defined by SamplePeriod (described in milliseconds).  There
