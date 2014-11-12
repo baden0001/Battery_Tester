@@ -12,6 +12,7 @@
  bits/volt
  454.212/12.4V = 36.63 bits/Volt
  15V*36.63 = 549.45 bit count
+ 
  Resistors used
  10k
  2k
@@ -61,6 +62,7 @@
             Added Over Current Shut down.  This will shut the test down,
              turn off all Resistor outputs and send "Battery Current High"
              to computer
+ 
  */
 #define CurrentSensor 0    //Current sensor input
 #define VoltageSensor 1    //Voltage sensor input
@@ -342,10 +344,14 @@ void SendEndStatus() {
 void ReadBatteryStatus() {
   CurrentTime = millis();
   //Read battery voltage.  Need to rescale this according to actual sensor used
+  //This scaling appears to be ok except when the test is under a load
+  //  The voltage appears to stay higher by another .15V
   BatteryVoltage = analogRead(VoltageSensor);
   BatteryVoltage = map(BatteryVoltage, 0, 1023, 0, 2725);
     
   //Read in Current.  Need to rescale this according to actual sensor used
+  //Up to 6.5 Amps the current sensed on the RobotShop was consistent
+  //  with an ammeter
   BatteryCurrent = analogRead(CurrentSensor);
   BatteryCurrent = map(BatteryCurrent, 101, 922, -500, 500); //Full scale remapping(0,1023,-625,625)
                                                              //Sensor full scale remapping(101, 922, -500, 500)  
