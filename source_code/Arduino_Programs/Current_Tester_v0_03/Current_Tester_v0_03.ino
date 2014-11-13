@@ -40,7 +40,7 @@
    One 10 Ohm resistor
  
  The voltage will be monitored to every tenth of a volt at an interval
- of one second defined by SamplePeriod (described in milliseconds).  From there, 
+ of five seconds defined by SamplePeriod (described in milliseconds).  From there, 
  the resistors will be brought into and out of circuit
  to control the current.  
  
@@ -238,9 +238,11 @@ void loop() {
       //Ohm Value       = 355/1000 = .355 ohms
       //Voltage         = 1250/100 = 12.50 Volts
       //SummedCurrent = 400
-      SummedCurrent = DesiredCurrent;  //Load desired current.      
+      SummedCurrent = DesiredCurrent;  //Load desired current.  
+      //Cycle through calculated resistances and decide if load needs to be
+      // turned on.   
       for (int Bank = 1; Bank < 8; Bank++) {
-        //CalculatedCurrent = 1250/355 * 100 = 352.1 = 352        
+        //CalculatedCurrent = 1250/355 * 10 = 35.21 = 35        
         CalculatedCurrent = BatteryVoltage * 10 ;
         CalculatedCurrent = CalculatedCurrent / ResistorBank[Bank];
         CalculatedCurrent = CalculatedCurrent * 10;
