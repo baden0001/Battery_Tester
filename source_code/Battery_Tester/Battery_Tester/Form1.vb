@@ -65,6 +65,7 @@
 '   V0.00       Initial write of program
 '   V0.01       CSV file saving was added
 '               Graphing Capability was added
+'   V0.02       Adjusted Scaling on Voltage and Current Graph
 
 
 Public Class MainForm
@@ -386,16 +387,16 @@ Public Class MainForm
         'Use this to redraw the graph as needed
 
         'Panel size 400,200
-        Dim intAmpUpperLimit As Integer = 19 '410
-        Dim intAmpLowerLimit As Integer = 10 '380
-        Dim intVoltUpperLimit As Integer = 140
-        Dim intVoltLowerLimit As Integer = 100
+        Dim intAmpUpperLimit As Integer = 410 '19 '410
+        Dim intAmpLowerLimit As Integer = 380 '10 '380
+        Dim intVoltUpperLimit As Integer = 1300
+        Dim intVoltLowerLimit As Integer = 1000
 
         'This will scale how many pixels per tenth of an amp
-        Dim intAmpScale As Integer = 200 / (intAmpUpperLimit - intAmpLowerLimit)
+        Dim intAmpScale As Decimal = 200 / (intAmpUpperLimit - intAmpLowerLimit)
 
-        'This will scale how many pixels per tenth of a volt
-        Dim intVoltScale As Integer = 200 / (intVoltUpperLimit - intVoltLowerLimit)
+        'This will scale how many pixels per hundredth of a volt
+        Dim intVoltScale As Decimal = 200 / (intVoltUpperLimit - intVoltLowerLimit)
 
         'To be used in drawing lines
         Dim previousAmpX As Integer = 0
