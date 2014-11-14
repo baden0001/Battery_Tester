@@ -190,7 +190,7 @@ void loop() {
       else if (buffer[0] == 'O' && buffer[1] == 'h' && buffer[2] == 'm' && buffer[3] == 's')
       {
         for (int Value = 1; Value < 8; Value++) {
-         Serial.println("Resistance Bank 1 = " + String(ResistorBank[Value]);          
+         Serial.println("Resistance Bank 1 = " + String(ResistorBank[Value]));          
         }
       }
       else //Catch failed commands sent with this one
@@ -231,7 +231,8 @@ void loop() {
      }
     }
     
-    if (BatteryVoltage <= 1090)
+    if (BatteryVoltage <= 1050)  //If battery voltage is below
+                                 // 10.5V, stop the test.
     {
       StopTime = millis();     
       digitalWrite(Bank1, LOW); //Shut off all resistor banks
