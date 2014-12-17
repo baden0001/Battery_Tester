@@ -107,6 +107,8 @@
  V0.02      Updated to include 1.1V reference to calculate 
              actual supplied voltage.  This can then measure
              more accurate voltage from the 12V battery
+ V0.03      Resistor banks will now be cycled through the 
+             all the banks automatically every sample period.
  
  */
 #define CurrentSensor 0    //Current sensor input
@@ -130,6 +132,7 @@ String ResistorBank = "";  //Keep track of resistor banks
 char buffer[15];  //buffer to store data from serial port, array size of 15
 int SamplePeriod = 5000;  //Period of time between voltage checks
 long ActualVoltage;
+int  BankOn = 2;
 
 void setup() {
   // initialize serial communication:
@@ -144,20 +147,33 @@ void setup() {
   pinMode(TenOhm1,OUTPUT);
   pinMode(TenOhm2,OUTPUT);
   pinMode(TenOhm3,OUTPUT);
-
+  digitalWrite(BankOn,HIGH);
+  digitalWrite(3,LOW);
+  digitalWrite(4,LOW);
+  digitalWrite(5,LOW);
+  digitalWrite(6,LOW);
+  digitalWrite(7,LOW);
+  digitalWrite(8,LOW);
+  delay(SamplePeriod);
 }
 
 void loop() {
   
     ReadBatteryStatus();
     SendStatus();
-    digitalWrite(HalfOhm, LOW);
-    digitalWrite(OneOhm, LOW);
-    digitalWrite(TwoOhm, LOW);
-    digitalWrite(ThreeOhm, LOW);
-    digitalWrite(TenOhm1, LOW);
-    digitalWrite(TenOhm2, LOW);
-    digitalWrite(TenOhm3, HIGH);
+    delay(100);
+    if (BankOn < 8)
+    {
+      digitalWrite(BankOn,LOW);
+      BankOn += 1;
+      digitalWrite(BankOn,HIGH);
+    }
+    else
+    {
+      digitalWrite(BankOn,LOW);
+      BankOn = 2;
+      digitalWrite(BankOn,HIGH);
+    }  
     delay(SamplePeriod);  //Delay for sampleperiod     
   
 }
@@ -208,7 +224,6 @@ void ReadBatteryStatus() {
   //remap to have the actual voltage of the analog input
   BatteryCurrent = map(BatteryCurrent, 0, 1023, 0, ActualVoltage);
   
-  Serial.println("Actual Voltage = " + String(BatteryCurrent));
   //remap to current values
   // 2.5V + 50*.04 = 4.5V
   // 2.5V - 50*.04 = .5V
