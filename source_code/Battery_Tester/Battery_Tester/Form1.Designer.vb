@@ -42,6 +42,14 @@ Partial Class MainForm
         Me.lblTime1 = New System.Windows.Forms.Label()
         Me.lblVoltColor = New System.Windows.Forms.Label()
         Me.lblAmpColor = New System.Windows.Forms.Label()
+        Me.btnSetOffsets = New System.Windows.Forms.Button()
+        Me.txtbxVoltageOffset = New System.Windows.Forms.TextBox()
+        Me.txtbxAmpOffset = New System.Windows.Forms.TextBox()
+        Me.lblVoltageOffset = New System.Windows.Forms.Label()
+        Me.lblAmpOffset = New System.Windows.Forms.Label()
+        Me.lblCurrentAmpOffset = New System.Windows.Forms.Label()
+        Me.lblCurrentVoltageOffset = New System.Windows.Forms.Label()
+        Me.btnReadOffsets = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'txtbxConsole
@@ -56,7 +64,7 @@ Partial Class MainForm
         'btnStart
         '
         Me.btnStart.Enabled = False
-        Me.btnStart.Location = New System.Drawing.Point(570, 30)
+        Me.btnStart.Location = New System.Drawing.Point(602, 12)
         Me.btnStart.Name = "btnStart"
         Me.btnStart.Size = New System.Drawing.Size(70, 23)
         Me.btnStart.TabIndex = 1
@@ -66,7 +74,7 @@ Partial Class MainForm
         'btnStop
         '
         Me.btnStop.Enabled = False
-        Me.btnStop.Location = New System.Drawing.Point(570, 59)
+        Me.btnStop.Location = New System.Drawing.Point(602, 41)
         Me.btnStop.Name = "btnStop"
         Me.btnStop.Size = New System.Drawing.Size(70, 22)
         Me.btnStop.TabIndex = 2
@@ -87,9 +95,9 @@ Partial Class MainForm
         '
         'btnCOM
         '
-        Me.btnCOM.Location = New System.Drawing.Point(535, 301)
+        Me.btnCOM.Location = New System.Drawing.Point(567, 280)
         Me.btnCOM.Name = "btnCOM"
-        Me.btnCOM.Size = New System.Drawing.Size(106, 24)
+        Me.btnCOM.Size = New System.Drawing.Size(104, 24)
         Me.btnCOM.TabIndex = 4
         Me.btnCOM.Text = "Connect to COM"
         Me.btnCOM.UseVisualStyleBackColor = True
@@ -97,7 +105,7 @@ Partial Class MainForm
         'cmbbxCOMPort
         '
         Me.cmbbxCOMPort.FormattingEnabled = True
-        Me.cmbbxCOMPort.Location = New System.Drawing.Point(537, 263)
+        Me.cmbbxCOMPort.Location = New System.Drawing.Point(568, 310)
         Me.cmbbxCOMPort.Name = "cmbbxCOMPort"
         Me.cmbbxCOMPort.Size = New System.Drawing.Size(103, 21)
         Me.cmbbxCOMPort.TabIndex = 5
@@ -105,7 +113,7 @@ Partial Class MainForm
         'btnSaveCSV
         '
         Me.btnSaveCSV.Enabled = False
-        Me.btnSaveCSV.Location = New System.Drawing.Point(535, 221)
+        Me.btnSaveCSV.Location = New System.Drawing.Point(567, 250)
         Me.btnSaveCSV.Name = "btnSaveCSV"
         Me.btnSaveCSV.Size = New System.Drawing.Size(104, 23)
         Me.btnSaveCSV.TabIndex = 7
@@ -190,6 +198,8 @@ Partial Class MainForm
         'lblVoltColor
         '
         Me.lblVoltColor.AutoSize = True
+        Me.lblVoltColor.BackColor = System.Drawing.Color.Blue
+        Me.lblVoltColor.ForeColor = System.Drawing.Color.White
         Me.lblVoltColor.Location = New System.Drawing.Point(15, 226)
         Me.lblVoltColor.Name = "lblVoltColor"
         Me.lblVoltColor.Size = New System.Drawing.Size(28, 13)
@@ -199,17 +209,101 @@ Partial Class MainForm
         'lblAmpColor
         '
         Me.lblAmpColor.AutoSize = True
+        Me.lblAmpColor.BackColor = System.Drawing.Color.Red
+        Me.lblAmpColor.ForeColor = System.Drawing.Color.White
         Me.lblAmpColor.Location = New System.Drawing.Point(482, 226)
         Me.lblAmpColor.Name = "lblAmpColor"
         Me.lblAmpColor.Size = New System.Drawing.Size(27, 13)
         Me.lblAmpColor.TabIndex = 17
         Me.lblAmpColor.Text = "Red"
         '
+        'btnSetOffsets
+        '
+        Me.btnSetOffsets.Enabled = False
+        Me.btnSetOffsets.Location = New System.Drawing.Point(567, 109)
+        Me.btnSetOffsets.Name = "btnSetOffsets"
+        Me.btnSetOffsets.Size = New System.Drawing.Size(104, 23)
+        Me.btnSetOffsets.TabIndex = 18
+        Me.btnSetOffsets.Text = "Set Offsets"
+        Me.btnSetOffsets.UseVisualStyleBackColor = True
+        '
+        'txtbxVoltageOffset
+        '
+        Me.txtbxVoltageOffset.Enabled = False
+        Me.txtbxVoltageOffset.Location = New System.Drawing.Point(622, 138)
+        Me.txtbxVoltageOffset.Name = "txtbxVoltageOffset"
+        Me.txtbxVoltageOffset.Size = New System.Drawing.Size(48, 20)
+        Me.txtbxVoltageOffset.TabIndex = 19
+        '
+        'txtbxAmpOffset
+        '
+        Me.txtbxAmpOffset.Enabled = False
+        Me.txtbxAmpOffset.Location = New System.Drawing.Point(622, 164)
+        Me.txtbxAmpOffset.Name = "txtbxAmpOffset"
+        Me.txtbxAmpOffset.Size = New System.Drawing.Size(48, 20)
+        Me.txtbxAmpOffset.TabIndex = 20
+        '
+        'lblVoltageOffset
+        '
+        Me.lblVoltageOffset.AutoSize = True
+        Me.lblVoltageOffset.Enabled = False
+        Me.lblVoltageOffset.Location = New System.Drawing.Point(539, 141)
+        Me.lblVoltageOffset.Name = "lblVoltageOffset"
+        Me.lblVoltageOffset.Size = New System.Drawing.Size(74, 13)
+        Me.lblVoltageOffset.TabIndex = 21
+        Me.lblVoltageOffset.Text = "Voltage Offset"
+        '
+        'lblAmpOffset
+        '
+        Me.lblAmpOffset.AutoSize = True
+        Me.lblAmpOffset.Enabled = False
+        Me.lblAmpOffset.Location = New System.Drawing.Point(554, 167)
+        Me.lblAmpOffset.Name = "lblAmpOffset"
+        Me.lblAmpOffset.Size = New System.Drawing.Size(59, 13)
+        Me.lblAmpOffset.TabIndex = 22
+        Me.lblAmpOffset.Text = "Amp Offset"
+        '
+        'lblCurrentAmpOffset
+        '
+        Me.lblCurrentAmpOffset.AutoSize = True
+        Me.lblCurrentAmpOffset.Location = New System.Drawing.Point(554, 217)
+        Me.lblCurrentAmpOffset.Name = "lblCurrentAmpOffset"
+        Me.lblCurrentAmpOffset.Size = New System.Drawing.Size(59, 13)
+        Me.lblCurrentAmpOffset.TabIndex = 24
+        Me.lblCurrentAmpOffset.Text = "Amp Offset"
+        '
+        'lblCurrentVoltageOffset
+        '
+        Me.lblCurrentVoltageOffset.AutoSize = True
+        Me.lblCurrentVoltageOffset.Location = New System.Drawing.Point(539, 201)
+        Me.lblCurrentVoltageOffset.Name = "lblCurrentVoltageOffset"
+        Me.lblCurrentVoltageOffset.Size = New System.Drawing.Size(74, 13)
+        Me.lblCurrentVoltageOffset.TabIndex = 23
+        Me.lblCurrentVoltageOffset.Text = "Voltage Offset"
+        '
+        'btnReadOffsets
+        '
+        Me.btnReadOffsets.Enabled = False
+        Me.btnReadOffsets.Location = New System.Drawing.Point(567, 81)
+        Me.btnReadOffsets.Name = "btnReadOffsets"
+        Me.btnReadOffsets.Size = New System.Drawing.Size(104, 23)
+        Me.btnReadOffsets.TabIndex = 25
+        Me.btnReadOffsets.Text = "Read Offsets"
+        Me.btnReadOffsets.UseVisualStyleBackColor = True
+        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(653, 340)
+        Me.ClientSize = New System.Drawing.Size(683, 340)
+        Me.Controls.Add(Me.btnReadOffsets)
+        Me.Controls.Add(Me.lblCurrentAmpOffset)
+        Me.Controls.Add(Me.lblCurrentVoltageOffset)
+        Me.Controls.Add(Me.lblAmpOffset)
+        Me.Controls.Add(Me.lblVoltageOffset)
+        Me.Controls.Add(Me.txtbxAmpOffset)
+        Me.Controls.Add(Me.txtbxVoltageOffset)
+        Me.Controls.Add(Me.btnSetOffsets)
         Me.Controls.Add(Me.lblAmpColor)
         Me.Controls.Add(Me.lblVoltColor)
         Me.Controls.Add(Me.lblTime1)
@@ -253,5 +347,13 @@ Partial Class MainForm
     Friend WithEvents lblTime1 As System.Windows.Forms.Label
     Friend WithEvents lblVoltColor As System.Windows.Forms.Label
     Friend WithEvents lblAmpColor As System.Windows.Forms.Label
+    Friend WithEvents btnSetOffsets As System.Windows.Forms.Button
+    Friend WithEvents txtbxVoltageOffset As System.Windows.Forms.TextBox
+    Friend WithEvents txtbxAmpOffset As System.Windows.Forms.TextBox
+    Friend WithEvents lblVoltageOffset As System.Windows.Forms.Label
+    Friend WithEvents lblAmpOffset As System.Windows.Forms.Label
+    Friend WithEvents lblCurrentAmpOffset As System.Windows.Forms.Label
+    Friend WithEvents lblCurrentVoltageOffset As System.Windows.Forms.Label
+    Friend WithEvents btnReadOffsets As System.Windows.Forms.Button
 
 End Class

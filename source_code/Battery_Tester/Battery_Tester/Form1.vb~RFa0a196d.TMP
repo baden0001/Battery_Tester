@@ -68,30 +68,20 @@
 '       Offset - Accesses offset setting and reading
 '               Response - Set or Read?
 '           Set
-'               Format - Set,<voltage offset>,<amp offset>
-'                   <voltage offset> = numeric value -9999 to 9999
-'                   <current offset> = numeric value -9999 to 9999
-'               Response Successful- Offsets Accepted
-'               Response Fail = Offsets Invalid
-'               Allow to set the Voltage Offset (first) and Amp Offset (second).  This will be added/subtracted to the value that
-'               is read from the analogs           
+'               Allow to set the Voltage Offset (first) and Current offset (second).  This will be added/subtracted to the value that
+'               is read from the analog 
 '           Read
-'               Format - Read
-'               Response - Read,<voltage offset>,<amp offset>
-'               Reads the voltage offset and amp offset that are preset in EEPROM on Arduino
+'               Reads the voltage offset and current offset that are preset in EEPROM on Arduino
 '
 'Revisions:
 '   V0.00       Initial write of program
 '   V0.01       CSV file saving was added
 '               Graphing Capability was added
 '   V0.02       Adjusted Scaling on Voltage and Current Graph
-'   V0.03       Added Carriage Return as end of message from Arduino
+'   V0.03       TODO add Carriage Return as end of message from Arduino
 '               TODO add Carriage return to commands sent from PC
-'               Added offset reading and writing of values from the Arduino
+'               TODO implement offset reading and writing of values from the Arduino
 '                   This will be accessed automatically on startup and dumped into labels on the main screen.
-'               Added Variables:
-'                   bolOffsetRead, strVoltageOffset, strAmpOffset, strSetVoltageOffset, strSetAmpOffset
-'				Added Voltage and Amp offsets that can be set from the main screen.
 
 
 Public Class MainForm
@@ -129,21 +119,9 @@ Public Class MainForm
     Dim penVolt As Pen = Pens.Blue
 
     'Define if the PC is trying to set or read the voltage and amp offsets
-    '   True = read offsets from Arduino (default)
+    '   True = read offsets from Arduino
     '   False = set offsets in Arduino
     Dim bolOffsetRead As Boolean = True
-
-    'Use as containers to pass voltage and amp offsets to main form from Serial Thread
-    Dim strVoltageOffset As String = "No Data"
-    Dim strAmpOffset As String = "No Data"
-
-    'Use as containers to pass voltage and amp offsets to Serial Thread from main form
-    Dim strSetVoltageOffset As String
-    Dim strSetAmpOffset As String
-
-    'Used to show the informational message once prior to setting the offsets
-    Dim bolVoltageOffsetBalloon As Boolean = False
-    Dim bolAmpOffsetBalloon As Boolean = False
 
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         UpdateTimer.Start()
@@ -153,7 +131,7 @@ Public Class MainForm
             btnCOM.Enabled = True
             btnStart.Enabled = False
         Else
-            MessageBox.Show("Usable COM ports were not detected.")
+            MessageBox.Show("Usable COM ports were not be detected.")
             btnCOM.Enabled = False
         End If
     End Sub
@@ -184,40 +162,14 @@ Public Class MainForm
                 btnCOM.Text = "Disconnect"
                 cmbbxCOMPort.Enabled = False
                 bolbtnStart = False
-
-                'enable offset controls
-                btnSetOffsets.Enabled = True
-                btnReadOffsets.Enabled = True
-                txtbxAmpOffset.Enabled = True
-                txtbxVoltageOffset.Enabled = True
-                lblCurrentAmpOffset.Enabled = True
-                lblCurrentVoltageOffset.Enabled = True
-                lblAmpOffset.Enabled = True
-                lblVoltageOffset.Enabled = True
-
                 'If the Arduino is in a battery test, then stop the test.
-                serialPortMain.Write("Exit" & vbCr)
-
-                bolOffsetRead = True
-                'May need to delay for a short time prior to sending this command.
-                ' Push controller into offset mode to retreive voltage and amp offsets
-                serialPortMain.Write("Offset" & vbCr)
+                serialPortMain.WriteLine("Exit")
 
             Catch ex As Exception
                 MsgBox(ex.ToString)
                 btnStart.Enabled = False
                 btnCOM.Text = "Connect to COM"
                 cmbbxCOMPort.Enabled = True
-
-                'disable offset controls
-                btnSetOffsets.Enabled = False
-                btnReadOffsets.Enabled = False
-                txtbxAmpOffset.Enabled = False
-                txtbxVoltageOffset.Enabled = False
-                lblCurrentAmpOffset.Enabled = False
-                lblCurrentVoltageOffset.Enabled = False
-                lblAmpOffset.Enabled = False
-                lblVoltageOffset.Enabled = False
             End Try
 
         ElseIf btnCOM.Text = "Disconnect" Then
@@ -228,16 +180,6 @@ Public Class MainForm
             bolbtnStart = False
             bolbtnStop = False
             cmbbxCOMPort.Enabled = True
-
-            'disable offset controls
-            btnSetOffsets.Enabled = False
-            btnReadOffsets.Enabled = False
-            txtbxAmpOffset.Enabled = False
-            txtbxVoltageOffset.Enabled = False
-            lblCurrentAmpOffset.Enabled = False
-            lblCurrentVoltageOffset.Enabled = False
-            lblAmpOffset.Enabled = False
-            lblVoltageOffset.Enabled = False
 
         End If
     End Sub
@@ -305,14 +247,14 @@ Public Class MainForm
 
                 ElseIf arrSplit(0) = "System Idle" Then
                     'send acknowledgement back to Arduino to state that it is ready to start the process
-                    serialPortMain.Write("Acknowledge" & vbCr)
+                    serialPortMain.WriteLine("Acknowledge")
                     bolbtnStart = True
                     bolbtnStop = False
                     clearCurrentData()
 
                 ElseIf arrSplit(0) = "Need to Acknowledge first" Then
                     'Send acknowledgement back to Arduino to state that it is ready to start the process
-                    serialPortMain.Write("Acknowledge" & vbCr)
+                    serialPortMain.WriteLine("Acknowledge")
                     bolbtnStart = True
                     bolbtnStop = False
                     bolbtnSaveCSV = False
@@ -333,32 +275,9 @@ Public Class MainForm
                     clearCurrentData()
 
                 ElseIf arrSplit(0) = "Set or Read?" Then
-                    'bolOffsetRead was set prior to this point.
-                    '   Save Offset button sets bolOffsetRead to false
-                    '   Connect to Com button sets bolOffsetRead to true
-                    If bolOffsetRead Then
-                        serialPortMain.Write("Read" & vbCr)
-                    ElseIf bolOffsetRead = False Then
-                        'Send offsets to Arduino
-                        serialPortMain.Write("Set," & strSetVoltageOffset & "," & strSetAmpOffset & vbCr)
-                        'serialPortMain.Write(strSetVoltageOffset & " " & strSetAmpOffset & vbCr)
 
-                    End If
 
-                ElseIf arrSplit(0) = "Read" Then
-                    'Parse voltage offset and amp offset
-                    strVoltageOffset = arrSplit(1)
-                    strAmpOffset = arrSplit(2)
 
-                ElseIf arrSplit(0) = "Offsets Accepted" Then
-                    'No action required with this response
-
-                ElseIf arrSplit(0) = "Offsets Invalid" Then
-                    'Warn user that this failed
-                    MessageBox.Show("Offsets were not accepted by tester.")
-
-                Else
-                    'Response from Arduino was not understood
 
                 End If
             End If
@@ -385,7 +304,7 @@ Public Class MainForm
     Private Sub btnStart_Click(sender As Object, e As EventArgs) Handles btnStart.Click
         'Tell Arduino to start the test
         clearArrBatteryData()
-        serialPortMain.Write("Start" & vbCr)
+        serialPortMain.WriteLine("Start")
         bolbtnStart = False
         bolbtnStop = True
         bolbtnSaveCSV = False
@@ -395,10 +314,9 @@ Public Class MainForm
     Private Sub btnStop_Click(sender As Object, e As EventArgs) Handles btnStop.Click
         'Tell Arduino to stop the test
 
-        serialPortMain.Write("Exit" & vbCr)
+        serialPortMain.WriteLine("Exit")
         bolbtnStart = True
         bolbtnStop = False
-
     End Sub
 
     Private Sub saveData()
@@ -437,7 +355,7 @@ Public Class MainForm
         arrBatteryData(2, 0) = "Battery Voltage"
         arrBatteryData(3, 0) = "Battery Current"
         arrBatteryData(4, 0) = "Resistor Bank Status"
-        arrBatteryData(5, 0) = "Actual USB Voltage on Arduino"
+        arrBatteryData(5, 0) = "Not currently used"
         intArrBattPointer = 0
 
     End Sub
@@ -459,7 +377,7 @@ Public Class MainForm
                 End If
                 arraySecondSavePointer += 1
             Loop
-            objWriter.Write(saveLine & vbCr)
+            objWriter.WriteLine(saveLine)
             saveLine = ""
             arraySecondSavePointer = 0
             arraySavePointer += 1
@@ -472,8 +390,6 @@ Public Class MainForm
     Private Sub UpdateTimer_Tick(sender As Object, e As EventArgs) Handles UpdateTimer.Tick
 
         txtbxConsole.Text = strData
-        lblCurrentVoltageOffset.Text = "Voltage Offset = " & strVoltageOffset
-        lblCurrentAmpOffset.Text = "Amp Offset = " & strAmpOffset
 
         If bolbtnSaveCSV Then
             btnSaveCSV.Enabled = True
@@ -483,24 +399,8 @@ Public Class MainForm
 
         If bolbtnStart Then
             btnStart.Enabled = True
-            btnSetOffsets.Enabled = True
-            btnReadOffsets.Enabled = True
-            txtbxAmpOffset.Enabled = True
-            txtbxVoltageOffset.Enabled = True
-            lblAmpOffset.Enabled = True
-            lblVoltageOffset.Enabled = True
-            lblCurrentAmpOffset.Enabled = True
-            lblCurrentVoltageOffset.Enabled = True
         Else
             btnStart.Enabled = False
-            btnSetOffsets.Enabled = False
-            btnReadOffsets.Enabled = False
-            txtbxAmpOffset.Enabled = False
-            txtbxVoltageOffset.Enabled = False
-            lblAmpOffset.Enabled = False
-            lblVoltageOffset.Enabled = False
-            lblCurrentAmpOffset.Enabled = False
-            lblCurrentVoltageOffset.Enabled = False
         End If
 
         If bolbtnStop Then
@@ -622,47 +522,16 @@ Public Class MainForm
 
         Dim ampValue As Integer
         Dim voltValue As Integer
-        If Not Integer.TryParse(txtbxAmpOffset.Text, ampValue) OrElse ampValue < -9999 OrElse ampValue > 9999 _
-            OrElse Not Integer.TryParse(txtbxVoltageOffset.Text, voltValue) OrElse voltValue < -9999 OrElse voltValue > 9999 Then
-            MessageBox.Show("Please Enter a Number from -9999 to 9999 for Amp Offset and Current Offset")
+        If Not Integer.TryParse(txtbxAmpOffset.Text, ampValue) OrElse ampValue < 0 OrElse ampValue > 9999 _
+            OrElse Not Integer.TryParse(txtbxVoltageOffset.Text, voltValue) OrElse voltValue < 0 OrElse voltValue > 9999 Then
+            MessageBox.Show("Please Enter a Number from 0 to 9999 for Amp Offset and Current Offset")
         Else
             'Push Arduino to setting offset state.  From here the data received sub will see the response from the Arduino.
             If serialPortMain.IsOpen Then
-                strSetVoltageOffset = txtbxVoltageOffset.Text
-                strSetAmpOffset = txtbxAmpOffset.Text
-                serialPortMain.Write("Offset" & vbCr)
-                bolOffsetRead = False
+                serialPortMain.WriteLine("Offset")
+
             End If
         End If
 
     End Sub
-
-    Private Sub btnReadOffsets_Click(sender As Object, e As EventArgs) Handles btnReadOffsets.Click
-        bolOffsetRead = True
-        serialPortMain.Write("Offset" & vbCr)
-
-    End Sub
-
-    Private Sub txtbxVoltageOffset_GotFocus(sender As Object, e As EventArgs) _
-     Handles txtbxVoltageOffset.GotFocus
-
-        If Not bolVoltageOffsetBalloon Then
-            bolVoltageOffsetBalloon = True
-            MessageBox.Show("Input -9999 to 9999 where:" & vbCrLf & "Input = 1234" & vbCrLf & "Represents = 12.34 Volt shift" _
-                            & vbCrLf & vbCrLf & "And" & vbCrLf & vbCrLf & "Input = 12" & vbCrLf & "Represents = .12 Volt shift")
-        End If
-
-    End Sub
-
-    Private Sub txtbxAmpOffset_GotFocus(sender As Object, e As EventArgs) _
-     Handles txtbxAmpOffset.GotFocus
-
-        If Not bolAmpOffsetBalloon Then
-            bolAmpOffsetBalloon = True
-            MessageBox.Show("Input -9999 to 9999 where:" & vbCrLf & "Input = 1234" & vbCrLf & "Represents = 123.4 Amp shift" _
-                            & vbCrLf & vbCrLf & "And" & vbCrLf & vbCrLf & "Input = 12" & vbCrLf & "Represents = 1.2 Amp shift")
-        End If
-
-    End Sub
-
 End Class

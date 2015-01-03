@@ -8,3 +8,4 @@ C:\Users\william baden\documents\visual studio 2013\Projects\Battery_Tester\Batt
 C:\Users\william baden\documents\visual studio 2013\Projects\Battery_Tester\Battery_Tester\obj\Debug\Battery_Tester.exe
 C:\Users\william baden\documents\visual studio 2013\Projects\Battery_Tester\Battery_Tester\obj\Debug\Battery_Tester.xml
 C:\Users\william baden\documents\visual studio 2013\Projects\Battery_Tester\Battery_Tester\obj\Debug\Battery_Tester.pdb
+C:\Users\william baden\documents\visual studio 2013\Projects\Battery_Tester\Battery_Tester\obj\Debug\Battery_Tester.vbprojResolveAssemblyReference.cache
