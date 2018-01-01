@@ -179,6 +179,7 @@
  V0.08       Changed the voltage calculations to double data type
               Purpose was to give more consistant amp and volt
               measurements using the offsets 
+ V0.09       Add long average for voltage check.  Attempt to remove spurious shutdowns.
             
  */
  
@@ -204,6 +205,9 @@ int TestState = 0;  //Create state machine, set to wait for key press
                     //      Send offset value for Read
                     //      Set offset value from PC
 long BatteryVoltage = 1250;  //Store battery voltage (1250/100 = 12.5V)
+long PreviousBatteryVoltage = 1250 ; //Stores prior voltage measurement
+long AverageBatteryVoltage = 1250 ;  //Store long average battery voltage (1250/100 = 12.5V)
+long AverageBatteryVoltageBuffer[5] ;
 long BatteryCurrent = 0;  //Store battery current (500/10 = 50 Amps)
 unsigned long StartTime;  //Store the initial timestamp
 unsigned long CurrentTime;  //Store current battery readings timestamp
@@ -282,7 +286,15 @@ void setup() {
   ResistorBank[5] = 10130;
   ResistorBank[6] = 10130;
   ResistorBank[7] = 10690;
-    
+  
+  //1/1/18 fill up battery long average
+ AverageBatteryVoltageBuffer[1] = 1250 ;
+ AverageBatteryVoltageBuffer[2] = 1250 ;
+ AverageBatteryVoltageBuffer[3] = 1250 ;
+ AverageBatteryVoltageBuffer[4] = 1250 ;
+ AverageBatteryVoltageBuffer[5] = 1250 ;
+ 
+ //Starting State
   TestState = 0;
 }
 
@@ -548,7 +560,11 @@ void ReadBatteryStatus() {
   //  main program
   double tempCalculate ;
   double tempAnalogValue ;
+  double tempVoltageDifference ;
   
+  //Save Prior Battery Voltage
+  PreviousBatteryVoltage = BatteryVoltage;
+ 
   //Save actual Vcc read when compared to on board 1.1V reference
   ActualVoltage = (double)readVcc() / 1000;
     
@@ -592,10 +608,35 @@ void ReadBatteryStatus() {
   //BatteryCurrent = map(BatteryCurrent, 500, 4500, -500, 500); //Full scale remapping(0,1023,-625,625)
                                                              //Sensor full scale remapping(101, 922, -500, 500)  
 
+  long tempVoltageDifference;
+  
   //Offset current and voltage value according to user definition
   BatteryVoltage = BatteryVoltage + VoltageOffset;
   BatteryCurrent = BatteryCurrent + AmpOffset;
-
+ 
+  //Calculate how far the voltage has dropped 
+  //  Not currently used
+  tempVoltageDifference = PreviousBatteryVoltage - BatteryVoltage;
+ 
+  //Save the AverageBatteryVoltageBuffer
+  int j=5;
+  for (int i=4; i >= 1; i--)
+  {
+      AverageBatteryVoltageBuffer[j] = AverageBatteryVoltageBuffer[i];
+      j = i;
+  }
+ 
+  //Store the latest battery voltage
+  AverageBatteryVoltageBuffer[1] = BatteryVoltage;
+ 
+  //Average out the voltages in the buffer
+  AverageBatteryVoltage = 0;
+  for (int k=1; k<=5; k++)
+  {
+     AverageBatteryVoltage = AverageBatteryVoltageBuffer[k] + AverageBatteryVoltage;   
+  }
+  //Use the average voltage to calculate which relays are to turn on
+  BatteryVoltage =  AverageBatteryVoltage / 5;
 }
 
 //This returns the calculated Vcc voltage that is supplied to the UNO
